@@ -32,6 +32,26 @@ build_property.EnableCodeStyleSeverity =
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/walee/OneDrive/سطح المكتب/5.dönem/Web Programlama/projects/DonemProjesi/FitnessCenterManagement/FitnessCenter.Web/Views/Gyms/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR3ltc1xDcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/walee/OneDrive/سطح المكتب/5.dönem/Web Programlama/projects/DonemProjesi/FitnessCenterManagement/FitnessCenter.Web/Views/Gyms/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR3ltc1xEZWxldGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/walee/OneDrive/سطح المكتب/5.dönem/Web Programlama/projects/DonemProjesi/FitnessCenterManagement/FitnessCenter.Web/Views/Gyms/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR3ltc1xEZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/walee/OneDrive/سطح المكتب/5.dönem/Web Programlama/projects/DonemProjesi/FitnessCenterManagement/FitnessCenter.Web/Views/Gyms/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR3ltc1xFZGl0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/walee/OneDrive/سطح المكتب/5.dönem/Web Programlama/projects/DonemProjesi/FitnessCenterManagement/FitnessCenter.Web/Views/Gyms/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR3ltc1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/walee/OneDrive/سطح المكتب/5.dönem/Web Programlama/projects/DonemProjesi/FitnessCenterManagement/FitnessCenter.Web/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
