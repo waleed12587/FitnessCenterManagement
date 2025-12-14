@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FitnessCenter.Web.Data;
 using FitnessCenter.Web.Models;
+using Microsoft.EntityFrameworkCore;
+using FitnessCenter.Web.ViewModels;
 
 namespace FitnessCenter.Web.Controllers
 {
@@ -22,8 +24,9 @@ namespace FitnessCenter.Web.Controllers
         // GET: Trainers
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Trainers.Include(t => t.Gym);
-            return View(await applicationDbContext.ToListAsync());
+            var trainers = _context.Trainers.Include(t => t.Gym);
+            return View(await trainers.ToListAsync());
+
         }
 
         // GET: Trainers/Details/5
@@ -72,55 +75,95 @@ namespace FitnessCenter.Web.Controllers
         // GET: Trainers/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var trainer = await _context.Trainers.FindAsync(id);
-            if (trainer == null)
+            var trainer = await _context.Trainers
+                .AsNoTracking()
+                .FirstOrDefaultAsync(t => t.Id == id);
+
+            if (trainer == null) return NotFound();
+
+            var allServices = await _context.GymServices
+                .AsNoTracking()
+                .OrderBy(s => s.Name)
+                .ToListAsync();
+
+            var selectedServiceIds = await _context.TrainerServices
+                .Where(ts => ts.TrainerId == trainer.Id)
+                .Select(ts => ts.GymServiceId)
+                .ToListAsync();
+
+            var vm = new TrainerEditVM
             {
-                return NotFound();
-            }
-            ViewData["GymId"] = new SelectList(_context.Gyms, "Id", "Id", trainer.GymId);
-            return View(trainer);
+                Id = trainer.Id,
+                FullName = trainer.FullName,
+                Specialty = trainer.Specialty,
+                Bio = trainer.Bio,
+                GymId = trainer.GymId,
+                Services = allServices.Select(s => new ServiceCheckboxVM
+                {
+                    GymServiceId = s.Id,
+                    Name = s.Name,
+                    IsSelected = selectedServiceIds.Contains(s.Id)
+                }).ToList()
+            };
+
+            // لو عندك Dropdown للجيم بالـ Edit (اختياري)
+            ViewData["GymId"] = new SelectList(_context.Gyms, "Id", "Name", trainer.GymId);
+
+            return View(vm);
         }
+
 
         // POST: Trainers/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FullName,Specialty,Bio,GymId")] Trainer trainer)
+        public async Task<IActionResult> Edit(int id, TrainerEditVM vm)
         {
-            if (id != trainer.Id)
+            if (id != vm.Id) return NotFound();
+
+            if (!ModelState.IsValid)
             {
-                return NotFound();
+                ViewData["GymId"] = new SelectList(_context.Gyms, "Id", "Name", vm.GymId);
+                return View(vm);
             }
 
-            if (ModelState.IsValid)
+            // حدّث بيانات المدرّب الأساسية
+            var trainer = await _context.Trainers.FirstOrDefaultAsync(t => t.Id == vm.Id);
+            if (trainer == null) return NotFound();
+
+            trainer.FullName = vm.FullName;
+            trainer.Specialty = vm.Specialty;
+            trainer.Bio = vm.Bio;
+            trainer.GymId = vm.GymId;
+
+            // حدّث روابط الخدمات (TrainerServices)
+            var existingLinks = await _context.TrainerServices
+                .Where(ts => ts.TrainerId == trainer.Id)
+                .ToListAsync();
+
+            _context.TrainerServices.RemoveRange(existingLinks);
+
+            var selectedIds = vm.Services
+                .Where(s => s.IsSelected)
+                .Select(s => s.GymServiceId)
+                .ToList();
+
+            foreach (var serviceId in selectedIds)
             {
-                try
+                _context.TrainerServices.Add(new TrainerService
                 {
-                    _context.Update(trainer);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!TrainerExists(trainer.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                    TrainerId = trainer.Id,
+                    GymServiceId = serviceId
+                });
             }
-            ViewData["GymId"] = new SelectList(_context.Gyms, "Id", "Id", trainer.GymId);
-            return View(trainer);
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
+
 
         // GET: Trainers/Delete/5
         public async Task<IActionResult> Delete(int? id)

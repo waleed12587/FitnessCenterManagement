@@ -22,8 +22,9 @@ namespace FitnessCenter.Web.Controllers
         // GET: GymServices
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.GymServices.Include(g => g.Gym);
-            return View(await applicationDbContext.ToListAsync());
+            var services = _context.GymServices.Include(g => g.Gym);
+            return View(await services.ToListAsync());
+
         }
 
         // GET: GymServices/Details/5

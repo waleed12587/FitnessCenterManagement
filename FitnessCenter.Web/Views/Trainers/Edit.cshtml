@@ -1,4 +1,5 @@
-﻿@model FitnessCenter.Web.Models.Trainer
+﻿@model FitnessCenter.Web.ViewModels.TrainerEditVM
+
 
 @{
     ViewData["Title"] = "Edit";
@@ -8,6 +9,7 @@
 
 <h4>Trainer</h4>
 <hr />
+<h5>Hizmetler (Trainer'ın verebildiği hizmetler)</h5>
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
@@ -33,6 +35,22 @@
                 <select asp-for="GymId" class="form-control" asp-items="ViewBag.GymId"></select>
                 <span asp-validation-for="GymId" class="text-danger"></span>
             </div>
+            @for (int i = 0; i < Model.Services.Count; i++)
+            {
+                <div class="col-md-4">
+                    <div class="form-check">
+                        <input class="form-check-input"
+                               asp-for="Services[@i].IsSelected" />
+
+                        <label class="form-check-label">
+                            @Model.Services[i].Name
+                        </label>
+
+                        <input type="hidden" asp-for="Services[@i].GymServiceId" />
+                        <input type="hidden" asp-for="Services[@i].Name" />
+                    </div>
+                </div>
+            }
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
