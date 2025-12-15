@@ -9,6 +9,7 @@ namespace FitnessCenter.Web.Controllers.Admin
     [Authorize(Roles = "Admin")]
     [Route("Admin/[controller]/[action]")]
     public class AppointmentsController : Controller
+
     {
         private readonly ApplicationDbContext _context;
 
