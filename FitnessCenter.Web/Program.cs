@@ -33,6 +33,7 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
