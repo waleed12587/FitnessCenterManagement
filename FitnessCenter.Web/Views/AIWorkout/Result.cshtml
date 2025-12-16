@@ -1,0 +1,83 @@
+@model FitnessCenter.Web.ViewModels.AIWorkoutResultVM
+
+@{
+    ViewData["Title"] = "AI Önerisi Sonuçları";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0">
+                        <i class="bi bi-check-circle"></i> Kişiselleştirilmiş Plan Hazırlandı
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5>Bilgileriniz</h5>
+                            <ul class="list-group">
+                                <li class="list-group-item"><strong>Yaş:</strong> @Model.Request.Age</li>
+                                <li class="list-group-item"><strong>Boy:</strong> @Model.Request.Height cm</li>
+                                <li class="list-group-item"><strong>Kilo:</strong> @Model.Request.Weight kg</li>
+                                <li class="list-group-item"><strong>Cinsiyet:</strong> @Model.Request.Gender</li>
+                                <li class="list-group-item"><strong>Hedef:</strong> @Model.Request.Goal</li>
+                                <li class="list-group-item"><strong>Aktivite:</strong> @Model.Request.ActivityLevel</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="alert alert-info">
+                                <strong>Oluşturulma Tarihi:</strong><br />
+                                @Model.GeneratedAt.ToString("dd MMMM yyyy HH:mm")
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="recommendation-box p-4 bg-light rounded">
+                        <h4 class="mb-3">Önerilen Plan</h4>
+                        <div class="recommendation-content">
+                            @Html.Raw(Model.Recommendation.Replace("\n", "<br />"))
+                        </div>
+                    </div>
+
+                    <div class="mt-4 d-flex gap-2">
+                        <a asp-action="Index" class="btn btn-primary">
+                            <i class="bi bi-arrow-left"></i> Yeni Plan Oluştur
+                        </a>
+                        <button onclick="window.print()" class="btn btn-secondary">
+                            <i class="bi bi-printer"></i> Yazdır
+                        </button>
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
+                            Ana Sayfa
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .recommendation-content {
+        line-height: 1.8;
+        font-size: 1.05rem;
+    }
+    .recommendation-content h3 {
+        color: #0d6efd;
+        margin-top: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    .recommendation-content h4 {
+        color: #198754;
+        margin-top: 1.2rem;
+        margin-bottom: 0.8rem;
+    }
+    .recommendation-content ul {
+        margin-left: 1.5rem;
+    }
+    .recommendation-content li {
+        margin-bottom: 0.5rem;
+    }
+</style>
+
