@@ -1,8 +1,105 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Ana Sayfa";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container-fluid px-0">
+    <!-- Hero Section -->
+    <div class="bg-primary text-white text-center py-5 mb-5">
+        <div class="container">
+            <h1 class="display-4 fw-bold mb-3">Fitness Center Yönetim Sistemi</h1>
+            <p class="lead mb-4">Spor salonu randevularınızı kolayca yönetin, antrenörlerinizle iletişime geçin ve kişiselleştirilmiş egzersiz planları alın.</p>
+            @if (!User.Identity?.IsAuthenticated ?? true)
+            {
+                <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-light btn-lg me-2">Kayıt Ol</a>
+                <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-outline-light btn-lg">Giriş Yap</a>
+            }
+            else
+            {
+                <a asp-controller="Appointments" asp-action="Create" class="btn btn-light btn-lg me-2">Randevu Al</a>
+                <a asp-controller="AIWorkout" asp-action="Index" class="btn btn-outline-light btn-lg">AI Öneri Al</a>
+            }
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="container mb-5">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <i class="bi bi-building" style="font-size: 3rem; color: #0d6efd;"></i>
+                        </div>
+                        <h5 class="card-title">Spor Salonları</h5>
+                        <p class="card-text">Farklı spor salonlarını keşfedin ve çalışma saatlerini görüntüleyin.</p>
+                        <a asp-controller="Gyms" asp-action="Index" class="btn btn-primary">Salonları Görüntüle</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <i class="bi bi-people" style="font-size: 3rem; color: #198754;"></i>
+                        </div>
+                        <h5 class="card-title">Antrenörler</h5>
+                        <p class="card-text">Uzman antrenörlerimizle tanışın ve uzmanlık alanlarını inceleyin.</p>
+                        <a asp-controller="Trainers" asp-action="Index" class="btn btn-success">Antrenörleri Görüntüle</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <i class="bi bi-calendar-check" style="font-size: 3rem; color: #dc3545;"></i>
+                        </div>
+                        <h5 class="card-title">Randevu Sistemi</h5>
+                        <p class="card-text">Kolayca randevu alın ve randevularınızı yönetin.</p>
+                        @if (User.Identity?.IsAuthenticated ?? false)
+                        {
+                            <a asp-controller="Appointments" asp-action="Create" class="btn btn-danger">Randevu Al</a>
+                        }
+                        else
+                        {
+                            <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-danger">Giriş Yap</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Feature Section -->
+    <div class="bg-light py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h2 class="display-5 fw-bold mb-4">AI Destekli Kişiselleştirilmiş Plan</h2>
+                    <p class="lead mb-4">Yapay zeka teknolojisi ile size özel egzersiz ve beslenme planı alın. Boy, kilo, hedef ve aktivite seviyenize göre özelleştirilmiş öneriler.</p>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Kişiselleştirilmiş egzersiz programı</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Beslenme önerileri</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>İlerleme takibi</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Motivasyon ipuçları</li>
+                    </ul>
+                    @if (User.Identity?.IsAuthenticated ?? false)
+                    {
+                        <a asp-controller="AIWorkout" asp-action="Index" class="btn btn-primary btn-lg mt-3">
+                            <i class="bi bi-robot"></i> AI Öneri Al
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary btn-lg mt-3">
+                            Başlamak İçin Giriş Yap
+                        </a>
+                    }
+                </div>
+                <div class="col-md-6 text-center">
+                    <i class="bi bi-robot" style="font-size: 10rem; color: #0d6efd; opacity: 0.3;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
