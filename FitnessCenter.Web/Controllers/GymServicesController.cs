@@ -48,9 +48,9 @@ namespace FitnessCenter.Web.Controllers
         }
 
         // GET: GymServices/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["GymId"] = new SelectList(_context.Gyms, "Id", "Id");
+            ViewData["GymId"] = new SelectList(await _context.Gyms.OrderBy(g => g.Name).ToListAsync(), "Id", "Name");
             return View();
         }
 
@@ -67,7 +67,7 @@ namespace FitnessCenter.Web.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GymId"] = new SelectList(_context.Gyms, "Id", "Id", gymService.GymId);
+            ViewData["GymId"] = new SelectList(await _context.Gyms.OrderBy(g => g.Name).ToListAsync(), "Id", "Name", gymService.GymId);
             return View(gymService);
         }
 
@@ -84,7 +84,7 @@ namespace FitnessCenter.Web.Controllers
             {
                 return NotFound();
             }
-            ViewData["GymId"] = new SelectList(_context.Gyms, "Id", "Id", gymService.GymId);
+            ViewData["GymId"] = new SelectList(await _context.Gyms.OrderBy(g => g.Name).ToListAsync(), "Id", "Name", gymService.GymId);
             return View(gymService);
         }
 
@@ -120,7 +120,7 @@ namespace FitnessCenter.Web.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GymId"] = new SelectList(_context.Gyms, "Id", "Id", gymService.GymId);
+            ViewData["GymId"] = new SelectList(await _context.Gyms.OrderBy(g => g.Name).ToListAsync(), "Id", "Name", gymService.GymId);
             return View(gymService);
         }
 
