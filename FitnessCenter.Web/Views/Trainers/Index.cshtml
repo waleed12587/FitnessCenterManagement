@@ -1,15 +1,18 @@
 ﻿@model IEnumerable<FitnessCenter.Web.Models.Trainer>
 
 @{
-    ViewData["Title"] = "Antrenörler";
+    ViewData["Title"] = "Trainers";
 }
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="bi bi-people"></i> Antrenörler</h2>
-        <a asp-action="Create" class="btn btn-primary">
-            <i class="bi bi-plus-circle"></i> Yeni Antrenör Ekle
-        </a>
+        <h2><i class="bi bi-people"></i> Trainers</h2>
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Add New Trainer
+            </a>
+        }
     </div>
 
     @if (Model.Any())
@@ -18,11 +21,11 @@
             <table class="table table-hover">
                 <thead class="table-dark">
                     <tr>
-                        <th>Ad Soyad</th>
-                        <th>Uzmanlık</th>
-                        <th>Biyografi</th>
-                        <th>Spor Salonu</th>
-                        <th>İşlemler</th>
+                        <th>Full Name</th>
+                        <th>Specialty</th>
+                        <th>Bio</th>
+                        <th>Gym</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -64,15 +67,18 @@
                             </td>
                             <td>
                                 <div class="btn-group btn-group-sm" role="group">
-                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-primary" title="Detaylar">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-primary" title="Details">
                                         <i class="bi bi-eye"></i>
                                     </a>
-                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-secondary" title="Düzenle">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger" title="Sil">
-                                        <i class="bi bi-trash"></i>
-                                    </a>
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-secondary" title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger" title="Delete">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    }
                                 </div>
                             </td>
                         </tr>
@@ -84,7 +90,7 @@
     else
     {
         <div class="alert alert-info">
-            <i class="bi bi-info-circle"></i> Henüz antrenör eklenmemiş.
+            <i class="bi bi-info-circle"></i> No trainers have been added yet.
         </div>
     }
 </div>

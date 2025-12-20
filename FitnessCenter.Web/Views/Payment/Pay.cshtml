@@ -1,0 +1,76 @@
+@model FitnessCenter.Web.Models.Appointment
+
+@{
+    ViewData["Title"] = "Payment";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0"><i class="bi bi-credit-card"></i> Payment</h3>
+                </div>
+                <div class="card-body">
+                    <h5 class="mb-4">Appointment Details</h5>
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <p><strong>Trainer:</strong> @Model.Trainer?.FullName</p>
+                            <p><strong>Service:</strong> @Model.GymService?.Name</p>
+                            <p><strong>Date:</strong> @Model.StartDateTime.ToString("dd.MM.yyyy")</p>
+                            <p><strong>Time:</strong> @Model.StartDateTime.ToString("HH:mm") - @Model.EndDateTime.ToString("HH:mm")</p>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="alert alert-info">
+                                <h5 class="mb-0">Total Amount</h5>
+                                <h3 class="text-primary mb-0">@Model.Price.ToString("C")</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <h5 class="mb-3">Select Payment Method</h5>
+                    <form asp-action="ProcessPayment" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="paymentMethod" id="cash" value="Cash" checked>
+                                <label class="form-check-label" for="cash">
+                                    <i class="bi bi-cash-coin"></i> Cash
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="paymentMethod" id="card" value="Credit Card">
+                                <label class="form-check-label" for="card">
+                                    <i class="bi bi-credit-card"></i> Credit Card
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="paymentMethod" id="bank" value="Bank Transfer">
+                                <label class="form-check-label" for="bank">
+                                    <i class="bi bi-bank"></i> Bank Transfer
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-warning">
+                            <i class="bi bi-info-circle"></i> <strong>Note:</strong> This is a demo payment system. No actual payment is processed.
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a asp-controller="Appointments" asp-action="MyAppointments" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-check-circle"></i> Complete Payment
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

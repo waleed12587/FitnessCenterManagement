@@ -1,7 +1,7 @@
 @model FitnessCenter.Web.ViewModels.AIWorkoutRequestVM
 
 @{
-    ViewData["Title"] = "AI Egzersiz Önerisi";
+    ViewData["Title"] = "AI Exercise Recommendation";
 }
 
 <div class="container mt-4">
@@ -10,11 +10,11 @@
             <div class="card shadow">
                 <div class="card-header bg-primary text-white">
                     <h3 class="mb-0">
-                        <i class="bi bi-robot"></i> AI Egzersiz ve Beslenme Planı
+                        <i class="bi bi-robot"></i> AI Exercise and Nutrition Plan
                     </h3>
                 </div>
                 <div class="card-body">
-                    <p class="text-muted">Kişisel bilgilerinize göre özelleştirilmiş bir egzersiz ve beslenme planı alın.</p>
+                    <p class="text-muted">Get a personalized exercise and nutrition plan based on your personal information.</p>
 
                     <form asp-action="GetRecommendation" method="post">
                         <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
@@ -29,8 +29,8 @@
                             <div class="col-md-6 mb-3">
                                 <label asp-for="Gender" class="form-label"></label>
                                 <select asp-for="Gender" class="form-select">
-                                    <option value="Erkek">Erkek</option>
-                                    <option value="Kadın">Kadın</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
                                 </select>
                                 <span asp-validation-for="Gender" class="text-danger"></span>
                             </div>
@@ -53,12 +53,12 @@
                         <div class="mb-3">
                             <label asp-for="Goal" class="form-label"></label>
                             <select asp-for="Goal" class="form-select">
-                                <option value="Kilo Verme">Kilo Verme</option>
-                                <option value="Kilo Alma">Kilo Alma</option>
-                                <option value="Kas Geliştirme">Kas Geliştirme</option>
-                                <option value="Güç Artırma">Güç Artırma</option>
-                                <option value="Genel Fitness">Genel Fitness</option>
-                                <option value="Dayanıklılık">Dayanıklılık</option>
+                                <option value="Weight Loss">Weight Loss</option>
+                                <option value="Weight Gain">Weight Gain</option>
+                                <option value="Muscle Building">Muscle Building</option>
+                                <option value="Strength">Strength</option>
+                                <option value="General Fitness">General Fitness</option>
+                                <option value="Endurance">Endurance</option>
                             </select>
                             <span asp-validation-for="Goal" class="text-danger"></span>
                         </div>
@@ -66,25 +66,25 @@
                         <div class="mb-3">
                             <label asp-for="ActivityLevel" class="form-label"></label>
                             <select asp-for="ActivityLevel" class="form-select">
-                                <option value="Düşük">Düşük (Hareketsiz)</option>
-                                <option value="Orta">Orta (Haftada 1-3 gün)</option>
-                                <option value="Yüksek">Yüksek (Haftada 4-6 gün)</option>
-                                <option value="Çok Yüksek">Çok Yüksek (Günlük antrenman)</option>
+                                <option value="Low">Low (Sedentary)</option>
+                                <option value="Moderate">Moderate (1-3 days/week)</option>
+                                <option value="High">High (4-6 days/week)</option>
+                                <option value="Very High">Very High (Daily training)</option>
                             </select>
                             <span asp-validation-for="ActivityLevel" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
                             <label asp-for="HealthConditions" class="form-label"></label>
-                            <textarea asp-for="HealthConditions" class="form-control" rows="3" placeholder="Varsa sağlık durumunuz veya özel notlarınız..."></textarea>
+                            <textarea asp-for="HealthConditions" class="form-control" rows="3" placeholder="Any health conditions or special notes..."></textarea>
                             <span asp-validation-for="HealthConditions" class="text-danger"></span>
                         </div>
 
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="bi bi-magic"></i> Plan Oluştur
+                                <i class="bi bi-magic"></i> Generate Plan
                             </button>
-                            <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Ana Sayfa</a>
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Home</a>
                         </div>
                     </form>
                 </div>
@@ -98,4 +98,3 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
-

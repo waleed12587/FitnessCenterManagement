@@ -59,7 +59,7 @@ namespace FitnessCenter.Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting AI recommendation");
-                ModelState.AddModelError("", "AI servisi şu anda kullanılamıyor. Lütfen daha sonra tekrar deneyin.");
+                ModelState.AddModelError("", "AI service is currently unavailable. Please try again later.");
                 return View("Index", model);
             }
         }
@@ -67,24 +67,24 @@ namespace FitnessCenter.Web.Controllers
         private string BuildPrompt(AIWorkoutRequestVM model)
         {
             var sb = new StringBuilder();
-            sb.AppendLine("Aşağıdaki bilgilere göre kişiselleştirilmiş bir egzersiz ve beslenme planı öner:");
-            sb.AppendLine($"- Yaş: {model.Age}");
-            sb.AppendLine($"- Boy: {model.Height} cm");
-            sb.AppendLine($"- Kilo: {model.Weight} kg");
-            sb.AppendLine($"- Cinsiyet: {model.Gender}");
-            sb.AppendLine($"- Hedef: {model.Goal}");
-            sb.AppendLine($"- Aktivite Seviyesi: {model.ActivityLevel}");
+            sb.AppendLine("Based on the following information, provide a personalized exercise and nutrition plan:");
+            sb.AppendLine($"- Age: {model.Age}");
+            sb.AppendLine($"- Height: {model.Height} cm");
+            sb.AppendLine($"- Weight: {model.Weight} kg");
+            sb.AppendLine($"- Gender: {model.Gender}");
+            sb.AppendLine($"- Goal: {model.Goal}");
+            sb.AppendLine($"- Activity Level: {model.ActivityLevel}");
             
             if (!string.IsNullOrEmpty(model.HealthConditions))
             {
-                sb.AppendLine($"- Sağlık Durumu: {model.HealthConditions}");
+                sb.AppendLine($"- Health Conditions: {model.HealthConditions}");
             }
 
-            sb.AppendLine("\nLütfen şunları içeren detaylı bir plan hazırla:");
-            sb.AppendLine("1. Haftalık egzersiz programı (günlük aktiviteler)");
-            sb.AppendLine("2. Beslenme önerileri");
-            sb.AppendLine("3. İlerleme takibi için öneriler");
-            sb.AppendLine("4. Motivasyon ipuçları");
+            sb.AppendLine("\nPlease create a detailed plan that includes:");
+            sb.AppendLine("1. Weekly exercise program (daily activities)");
+            sb.AppendLine("2. Nutrition recommendations");
+            sb.AppendLine("3. Progress tracking suggestions");
+            sb.AppendLine("4. Motivation tips");
 
             return sb.ToString();
         }
@@ -93,10 +93,19 @@ namespace FitnessCenter.Web.Controllers
         {
             // Try to use OpenAI API if configured
             var apiKey = _configuration["OpenAI:ApiKey"];
-            
+
             if (!string.IsNullOrEmpty(apiKey))
             {
-                return await GetOpenAIRecommendationAsync(prompt, apiKey);
+                try
+                {
+                    return await GetOpenAIRecommendationAsync(prompt, apiKey);
+                }
+                catch (Exception ex)
+                {
+                    // If OpenAI fails, fall back to template
+                    _logger.LogWarning(ex, "OpenAI API call failed, using fallback");
+                    return GenerateFallbackRecommendation(prompt);
+                }
             }
 
             // Fallback: Generate a realistic recommendation based on input
@@ -113,7 +122,7 @@ namespace FitnessCenter.Web.Controllers
                 model = "gpt-3.5-turbo",
                 messages = new[]
                 {
-                    new { role = "system", content = "Sen bir fitness ve beslenme uzmanısın. Türkçe yanıt ver." },
+                    new { role = "system", content = "You are a fitness and nutrition expert. Provide detailed recommendations in English." },
                     new { role = "user", content = prompt }
                 },
                 max_tokens = 1000,
@@ -133,60 +142,59 @@ namespace FitnessCenter.Web.Controllers
                 if (result.TryGetProperty("choices", out var choices) && choices.GetArrayLength() > 0)
                 {
                     var message = choices[0].GetProperty("message").GetProperty("content").GetString();
-                    return message ?? "Yanıt alınamadı.";
+                    return message ?? "No response received.";
                 }
             }
 
-            throw new Exception("OpenAI API hatası");
+            throw new Exception("OpenAI API error");
         }
 
         private string GenerateFallbackRecommendation(string prompt)
         {
             // Generate a realistic recommendation without API
             var sb = new StringBuilder();
-            sb.AppendLine("## Kişiselleştirilmiş Fitness ve Beslenme Planı\n");
-            sb.AppendLine("### Haftalık Egzersiz Programı\n");
-            sb.AppendLine("**Pazartesi - Üst Vücut:**");
-            sb.AppendLine("- Göğüs: Bench Press 3x10");
-            sb.AppendLine("- Sırt: Pull-ups 3x8");
-            sb.AppendLine("- Omuz: Shoulder Press 3x10");
-            sb.AppendLine("\n**Salı - Alt Vücut:**");
+            sb.AppendLine("## Personalized Fitness and Nutrition Plan\n");
+            sb.AppendLine("### Weekly Exercise Program\n");
+            sb.AppendLine("**Monday - Upper Body:**");
+            sb.AppendLine("- Chest: Bench Press 3x10");
+            sb.AppendLine("- Back: Pull-ups 3x8");
+            sb.AppendLine("- Shoulders: Shoulder Press 3x10");
+            sb.AppendLine("\n**Tuesday - Lower Body:**");
             sb.AppendLine("- Squat 4x10");
             sb.AppendLine("- Deadlift 3x8");
             sb.AppendLine("- Leg Press 3x12");
-            sb.AppendLine("\n**Çarşamba - Kardiyo:**");
-            sb.AppendLine("- 30 dakika koşu veya bisiklet");
-            sb.AppendLine("- 15 dakika HIIT");
-            sb.AppendLine("\n**Perşembe - Üst Vücut:**");
-            sb.AppendLine("- Biceps & Triceps odaklı antrenman");
-            sb.AppendLine("- 45 dakika");
-            sb.AppendLine("\n**Cuma - Alt Vücut:**");
+            sb.AppendLine("\n**Wednesday - Cardio:**");
+            sb.AppendLine("- 30 minutes running or cycling");
+            sb.AppendLine("- 15 minutes HIIT");
+            sb.AppendLine("\n**Thursday - Upper Body:**");
+            sb.AppendLine("- Biceps & Triceps focused workout");
+            sb.AppendLine("- 45 minutes");
+            sb.AppendLine("\n**Friday - Lower Body:**");
             sb.AppendLine("- Lunges 3x12");
             sb.AppendLine("- Calf Raises 4x15");
-            sb.AppendLine("\n**Cumartesi - Aktif Dinlenme:**");
-            sb.AppendLine("- Yoga veya stretching");
-            sb.AppendLine("\n**Pazar - Dinlenme Günü**\n");
+            sb.AppendLine("\n**Saturday - Active Rest:**");
+            sb.AppendLine("- Yoga or stretching");
+            sb.AppendLine("\n**Sunday - Rest Day**\n");
             
-            sb.AppendLine("### Beslenme Önerileri\n");
-            sb.AppendLine("- **Kahvaltı:** Yumurta, tam tahıllı ekmek, peynir");
-            sb.AppendLine("- **Öğle:** Tavuk göğsü, pilav, sebze");
-            sb.AppendLine("- **Akşam:** Balık, salata");
-            sb.AppendLine("- **Ara Öğünler:** Protein shake, meyve, kuruyemiş");
-            sb.AppendLine("- **Su:** Günde en az 2-3 litre\n");
+            sb.AppendLine("### Nutrition Recommendations\n");
+            sb.AppendLine("- **Breakfast:** Eggs, whole grain bread, cheese");
+            sb.AppendLine("- **Lunch:** Chicken breast, rice, vegetables");
+            sb.AppendLine("- **Dinner:** Fish, salad");
+            sb.AppendLine("- **Snacks:** Protein shake, fruits, nuts");
+            sb.AppendLine("- **Water:** At least 2-3 liters per day\n");
             
-            sb.AppendLine("### İlerleme Takibi\n");
-            sb.AppendLine("- Haftalık kilo ve ölçü takibi");
-            sb.AppendLine("- Antrenman performans kaydı");
-            sb.AppendLine("- Fotoğraf çekimi (aylık)\n");
+            sb.AppendLine("### Progress Tracking\n");
+            sb.AppendLine("- Weekly weight and measurements");
+            sb.AppendLine("- Workout performance records");
+            sb.AppendLine("- Monthly photos\n");
             
-            sb.AppendLine("### Motivasyon İpuçları\n");
-            sb.AppendLine("- Küçük hedefler belirleyin");
-            sb.AppendLine("- İlerlemenizi kaydedin");
-            sb.AppendLine("- Düzenli uyku alın (7-8 saat)");
-            sb.AppendLine("- Sabırlı olun, sonuçlar zaman alır");
+            sb.AppendLine("### Motivation Tips\n");
+            sb.AppendLine("- Set small goals");
+            sb.AppendLine("- Track your progress");
+            sb.AppendLine("- Get regular sleep (7-8 hours)");
+            sb.AppendLine("- Be patient, results take time");
 
             return sb.ToString();
         }
     }
 }
-

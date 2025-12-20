@@ -4,34 +4,34 @@ namespace FitnessCenter.Web.ViewModels
 {
     public class AIWorkoutRequestVM
     {
-        [Required(ErrorMessage = "Yaş gereklidir")]
-        [Range(13, 100, ErrorMessage = "Yaş 13-100 arasında olmalıdır")]
-        [Display(Name = "Yaş")]
+        [Required(ErrorMessage = "Age is required")]
+        [Range(13, 100, ErrorMessage = "Age must be between 13-100")]
+        [Display(Name = "Age")]
         public int Age { get; set; }
 
-        [Required(ErrorMessage = "Boy gereklidir")]
-        [Range(100, 250, ErrorMessage = "Boy 100-250 cm arasında olmalıdır")]
-        [Display(Name = "Boy (cm)")]
+        [Required(ErrorMessage = "Height is required")]
+        [Range(100, 250, ErrorMessage = "Height must be between 100-250 cm")]
+        [Display(Name = "Height (cm)")]
         public int Height { get; set; }
 
-        [Required(ErrorMessage = "Kilo gereklidir")]
-        [Range(30, 200, ErrorMessage = "Kilo 30-200 kg arasında olmalıdır")]
-        [Display(Name = "Kilo (kg)")]
+        [Required(ErrorMessage = "Weight is required")]
+        [Range(30, 200, ErrorMessage = "Weight must be between 30-200 kg")]
+        [Display(Name = "Weight (kg)")]
         public decimal Weight { get; set; }
 
-        [Required(ErrorMessage = "Cinsiyet seçilmelidir")]
-        [Display(Name = "Cinsiyet")]
-        public string Gender { get; set; } = "Erkek";
+        [Required(ErrorMessage = "Gender must be selected")]
+        [Display(Name = "Gender")]
+        public string Gender { get; set; } = "Male";
 
-        [Required(ErrorMessage = "Hedef seçilmelidir")]
-        [Display(Name = "Hedef")]
-        public string Goal { get; set; } = "Kilo Verme";
+        [Required(ErrorMessage = "Goal must be selected")]
+        [Display(Name = "Goal")]
+        public string Goal { get; set; } = "Weight Loss";
 
-        [Required(ErrorMessage = "Aktivite seviyesi seçilmelidir")]
-        [Display(Name = "Aktivite Seviyesi")]
-        public string ActivityLevel { get; set; } = "Orta";
+        [Required(ErrorMessage = "Activity level must be selected")]
+        [Display(Name = "Activity Level")]
+        public string ActivityLevel { get; set; } = "Moderate";
 
-        [Display(Name = "Sağlık Durumu / Notlar (Opsiyonel)")]
+        [Display(Name = "Health Conditions / Notes (Optional)")]
         [StringLength(500)]
         public string? HealthConditions { get; set; }
     }
@@ -43,4 +43,5 @@ namespace FitnessCenter.Web.ViewModels
         public DateTime GeneratedAt { get; set; }
     }
 }
+
 

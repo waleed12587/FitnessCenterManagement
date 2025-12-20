@@ -7,21 +7,21 @@ namespace FitnessCenter.Web.Models
         public int Id { get; set; }
 
         [Required]
-        [Display(Name = "Hizmet Adı")]
+        [Display(Name = "Service Name")]
         public string Name { get; set; } = null!;
 
         [Required]
-        [Range(10, 300, ErrorMessage = "Süre 10 ile 300 dakika arasında olmalıdır.")]
-        [Display(Name = "Süre (dakika)")]
+        [Range(10, 300, ErrorMessage = "Duration must be between 10 and 300 minutes.")]
+        [Display(Name = "Duration (minutes)")]
         public int DurationMinutes { get; set; }
 
         [Required]
-        [Range(0, 10000, ErrorMessage = "Ücret 0 ile 10000 arasında olmalıdır.")]
-        [Display(Name = "Ücret (₺)")]
+        [Range(0, 10000, ErrorMessage = "Price must be between 0 and 10000.")]
+        [Display(Name = "Price")]
         public decimal Price { get; set; }
 
         [Required]
-        [Display(Name = "Salon")]
+        [Display(Name = "Gym")]
         public int GymId { get; set; }
 
         public Gym? Gym { get; set; }

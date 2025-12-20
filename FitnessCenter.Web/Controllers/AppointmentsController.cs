@@ -62,7 +62,7 @@ namespace FitnessCenter.Web.Controllers
 
             if (!trainerOffersService)
             {
-                ModelState.AddModelError("", "Seçilen antrenör bu hizmeti vermiyor.");
+                ModelState.AddModelError("", "The selected trainer does not offer this service.");
                 ViewData["GymServiceId"] = new SelectList(_context.GymServices.OrderBy(s => s.Name), "Id", "Name", vm.GymServiceId);
                 ViewData["TrainerId"] = new SelectList(_context.Trainers.OrderBy(t => t.FullName), "Id", "FullName", vm.TrainerId);
                 return View(vm);
@@ -81,7 +81,7 @@ namespace FitnessCenter.Web.Controllers
 
             if (hasConflict)
             {
-                ModelState.AddModelError("", "Bu saat aralığında antrenörün başka bir randevusu var.");
+                ModelState.AddModelError("", "The trainer has another appointment at this time.");
                 ViewData["GymServiceId"] = new SelectList(_context.GymServices.OrderBy(s => s.Name), "Id", "Name", vm.GymServiceId);
                 ViewData["TrainerId"] = new SelectList(_context.Trainers.OrderBy(t => t.FullName), "Id", "FullName", vm.TrainerId);
                 return View(vm);
@@ -101,7 +101,8 @@ namespace FitnessCenter.Web.Controllers
             _context.Appointments.Add(appointment);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction(nameof(MyAppointments));
+            TempData["Success"] = "Appointment created successfully!";
+            return RedirectToAction("MyAppointments");
         }
 
         // Member view: list only his appointments

@@ -1,5 +1,6 @@
 using FitnessCenter.Web.Data;
 using FitnessCenter.Web.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
@@ -20,7 +21,6 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 {
     options.SignIn.RequireConfirmedAccount = false;
 
-
     options.Password.RequireDigit = false;
     options.Password.RequireLowercase = false;
     options.Password.RequireUppercase = false;
@@ -31,9 +31,25 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 .AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+// Configure cookie authentication for "Remember Me" functionality
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    // When RememberMe is true, cookie persists for 30 days
+    // When RememberMe is false, cookie is session-based (expires when browser closes)
+    options.ExpireTimeSpan = TimeSpan.FromDays(30); // Only used when RememberMe = true
+    options.SlidingExpiration = true;
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    options.LoginPath = "/Identity/Account/Login";
+    options.LogoutPath = "/Identity/Account/Logout";
+    options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+});
+
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddHttpClient(); // Add HttpClientFactory for AI controller
 
 var app = builder.Build();
 

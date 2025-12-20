@@ -1,15 +1,14 @@
-﻿using FitnessCenter.Web.Data;
+using FitnessCenter.Web.Data;
 using FitnessCenter.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace FitnessCenter.Web.Controllers.Admin
+namespace FitnessCenter.Web.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     [Authorize(Roles = "Admin")]
-    [Route("Admin/[controller]/[action]")]
     public class AppointmentsController : Controller
-
     {
         private readonly ApplicationDbContext _context;
 
@@ -18,14 +17,13 @@ namespace FitnessCenter.Web.Controllers.Admin
             _context = context;
         }
 
-        // Admin/Appointments/Pending
-        [HttpGet]
+        // GET: Admin/Appointments/Pending
         public async Task<IActionResult> Pending()
         {
             var list = await _context.Appointments
                 .Include(a => a.Trainer)
                 .Include(a => a.GymService)
-                .Include(a => a.Member) // إذا عندك navigation Member
+                .Include(a => a.Member)
                 .Where(a => a.Status == AppointmentStatus.Pending)
                 .OrderBy(a => a.StartDateTime)
                 .ToListAsync();
@@ -33,7 +31,7 @@ namespace FitnessCenter.Web.Controllers.Admin
             return View(list);
         }
 
-        // Admin/Appointments/Approve/5
+        // POST: Admin/Appointments/Approve/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Approve(int id)
@@ -47,7 +45,7 @@ namespace FitnessCenter.Web.Controllers.Admin
             return RedirectToAction(nameof(Pending));
         }
 
-        // Admin/Appointments/Reject/5
+        // POST: Admin/Appointments/Reject/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Reject(int id)
@@ -62,3 +60,4 @@ namespace FitnessCenter.Web.Controllers.Admin
         }
     }
 }
+

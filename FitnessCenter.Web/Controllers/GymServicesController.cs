@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -47,6 +48,7 @@ namespace FitnessCenter.Web.Controllers
         }
 
         // GET: GymServices/Create
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create()
         {
             ViewData["GymId"] = new SelectList(await _context.Gyms.OrderBy(g => g.Name).ToListAsync(), "Id", "Name");
@@ -54,8 +56,7 @@ namespace FitnessCenter.Web.Controllers
         }
 
         // POST: GymServices/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,DurationMinutes,Price,GymId")] GymService gymService)
@@ -71,6 +72,7 @@ namespace FitnessCenter.Web.Controllers
         }
 
         // GET: GymServices/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -88,8 +90,7 @@ namespace FitnessCenter.Web.Controllers
         }
 
         // POST: GymServices/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,DurationMinutes,Price,GymId")] GymService gymService)
@@ -124,6 +125,7 @@ namespace FitnessCenter.Web.Controllers
         }
 
         // GET: GymServices/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -143,6 +145,7 @@ namespace FitnessCenter.Web.Controllers
         }
 
         // POST: GymServices/Delete/5
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

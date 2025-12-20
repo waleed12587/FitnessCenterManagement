@@ -5,15 +5,15 @@ namespace FitnessCenter.Web.ViewModels
     public class AppointmentCreateVM
     {
         [Required]
-        [Display(Name = "Hizmet")]
+        [Display(Name = "Service")]
         public int GymServiceId { get; set; }
 
         [Required]
-        [Display(Name = "Antrenör")]
+        [Display(Name = "Trainer")]
         public int TrainerId { get; set; }
 
         [Required]
-        [Display(Name = "Başlangıç Zamanı")]
+        [Display(Name = "Start Date & Time")]
         public DateTime StartDateTime { get; set; }
     }
 }

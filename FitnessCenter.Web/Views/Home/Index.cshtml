@@ -1,22 +1,22 @@
 ﻿@{
-    ViewData["Title"] = "Ana Sayfa";
+    ViewData["Title"] = "Home Page";
 }
 
 <div class="container-fluid px-0">
     <!-- Hero Section -->
     <div class="bg-primary text-white text-center py-5 mb-5">
         <div class="container">
-            <h1 class="display-4 fw-bold mb-3">Fitness Center Yönetim Sistemi</h1>
-            <p class="lead mb-4">Spor salonu randevularınızı kolayca yönetin, antrenörlerinizle iletişime geçin ve kişiselleştirilmiş egzersiz planları alın.</p>
+            <h1 class="display-4 fw-bold mb-3">Fitness Center Management System</h1>
+            <p class="lead mb-4">Easily manage your gym appointments, connect with trainers, and get personalized exercise plans.</p>
             @if (!User.Identity?.IsAuthenticated ?? true)
             {
-                <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-light btn-lg me-2">Kayıt Ol</a>
-                <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-outline-light btn-lg">Giriş Yap</a>
+                <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-light btn-lg me-2">Register</a>
+                <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-outline-light btn-lg">Login</a>
             }
             else
             {
-                <a asp-controller="Appointments" asp-action="Create" class="btn btn-light btn-lg me-2">Randevu Al</a>
-                <a asp-controller="AIWorkout" asp-action="Index" class="btn btn-outline-light btn-lg">AI Öneri Al</a>
+                <a asp-controller="Appointments" asp-action="Create" class="btn btn-light btn-lg me-2">Book Appointment</a>
+                <a asp-controller="AIWorkout" asp-action="Index" class="btn btn-outline-light btn-lg">Get AI Recommendation</a>
             }
         </div>
     </div>
@@ -30,9 +30,9 @@
                         <div class="mb-3">
                             <i class="bi bi-building" style="font-size: 3rem; color: #0d6efd;"></i>
                         </div>
-                        <h5 class="card-title">Spor Salonları</h5>
-                        <p class="card-text">Farklı spor salonlarını keşfedin ve çalışma saatlerini görüntüleyin.</p>
-                        <a asp-controller="Gyms" asp-action="Index" class="btn btn-primary">Salonları Görüntüle</a>
+                        <h5 class="card-title">Gyms</h5>
+                        <p class="card-text">Discover different gyms and view their working hours.</p>
+                        <a asp-controller="Gyms" asp-action="Index" class="btn btn-primary">View Gyms</a>
                     </div>
                 </div>
             </div>
@@ -42,9 +42,9 @@
                         <div class="mb-3">
                             <i class="bi bi-people" style="font-size: 3rem; color: #198754;"></i>
                         </div>
-                        <h5 class="card-title">Antrenörler</h5>
-                        <p class="card-text">Uzman antrenörlerimizle tanışın ve uzmanlık alanlarını inceleyin.</p>
-                        <a asp-controller="Trainers" asp-action="Index" class="btn btn-success">Antrenörleri Görüntüle</a>
+                        <h5 class="card-title">Trainers</h5>
+                        <p class="card-text">Meet our expert trainers and explore their specialties.</p>
+                        <a asp-controller="Trainers" asp-action="Index" class="btn btn-success">View Trainers</a>
                     </div>
                 </div>
             </div>
@@ -54,15 +54,15 @@
                         <div class="mb-3">
                             <i class="bi bi-calendar-check" style="font-size: 3rem; color: #dc3545;"></i>
                         </div>
-                        <h5 class="card-title">Randevu Sistemi</h5>
-                        <p class="card-text">Kolayca randevu alın ve randevularınızı yönetin.</p>
+                        <h5 class="card-title">Appointment System</h5>
+                        <p class="card-text">Easily book appointments and manage your bookings.</p>
                         @if (User.Identity?.IsAuthenticated ?? false)
                         {
-                            <a asp-controller="Appointments" asp-action="Create" class="btn btn-danger">Randevu Al</a>
+                            <a asp-controller="Appointments" asp-action="Create" class="btn btn-danger">Book Appointment</a>
                         }
                         else
                         {
-                            <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-danger">Giriş Yap</a>
+                            <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-danger">Login</a>
                         }
                     </div>
                 </div>
@@ -75,24 +75,24 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-6">
-                    <h2 class="display-5 fw-bold mb-4">AI Destekli Kişiselleştirilmiş Plan</h2>
-                    <p class="lead mb-4">Yapay zeka teknolojisi ile size özel egzersiz ve beslenme planı alın. Boy, kilo, hedef ve aktivite seviyenize göre özelleştirilmiş öneriler.</p>
+                    <h2 class="display-5 fw-bold mb-4">AI-Powered Personalized Plan</h2>
+                    <p class="lead mb-4">Get personalized exercise and nutrition plans using AI technology. Customized recommendations based on your height, weight, goals, and activity level.</p>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Kişiselleştirilmiş egzersiz programı</li>
-                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Beslenme önerileri</li>
-                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>İlerleme takibi</li>
-                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Motivasyon ipuçları</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Personalized exercise program</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Nutrition recommendations</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Progress tracking</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Motivation tips</li>
                     </ul>
                     @if (User.Identity?.IsAuthenticated ?? false)
                     {
                         <a asp-controller="AIWorkout" asp-action="Index" class="btn btn-primary btn-lg mt-3">
-                            <i class="bi bi-robot"></i> AI Öneri Al
+                            <i class="bi bi-robot"></i> Get AI Recommendation
                         </a>
                     }
                     else
                     {
                         <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary btn-lg mt-3">
-                            Başlamak İçin Giriş Yap
+                            Login to Get Started
                         </a>
                     }
                 </div>
