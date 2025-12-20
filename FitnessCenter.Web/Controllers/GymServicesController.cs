@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FitnessCenter.Web.Data;
 using FitnessCenter.Web.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace FitnessCenter.Web.Controllers
 {

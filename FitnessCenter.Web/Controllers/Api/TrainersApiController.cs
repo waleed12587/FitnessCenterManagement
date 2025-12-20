@@ -97,8 +97,8 @@ namespace FitnessCenter.Web.Controllers.Api
                     IsAvailable = !t.Availabilities.Any() || 
                         t.Availabilities.Any(a => 
                             a.DayOfWeek == date.Value.DayOfWeek &&
-                            a.StartTime <= TimeOnly.FromDateTime(date.Value) &&
-                            a.EndTime >= TimeOnly.FromDateTime(date.Value))
+                            a.StartTime <= date.Value.TimeOfDay &&
+                            a.EndTime >= date.Value.TimeOfDay)
                 })
                 .OrderBy(t => t.FullName)
                 .ToListAsync();
