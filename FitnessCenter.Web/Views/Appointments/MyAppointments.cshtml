@@ -1,0 +1,27 @@
+﻿@model IEnumerable<FitnessCenter.Web.Models.Appointment>
+
+<h1>Randevularım</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Tarih</th>
+            <th>Antrenör</th>
+            <th>Hizmet</th>
+            <th>Ücret</th>
+            <th>Durum</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var a in Model)
+        {
+            <tr>
+                <td>@a.StartDateTime.ToString("yyyy-MM-dd HH:mm")</td>
+                <td>@a.Trainer?.FullName</td>
+                <td>@a.GymService?.Name</td>
+                <td>@a.Price</td>
+                <td>@a.Status</td>
+            </tr>
+        }
+    </tbody>
+</table>

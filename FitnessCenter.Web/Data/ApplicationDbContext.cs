@@ -19,6 +19,13 @@ namespace FitnessCenter.Web.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            builder.Entity<GymService>()
+           .Property(x => x.Price)
+           .HasPrecision(18, 2);
+
+            builder.Entity<Appointment>()
+                .Property(x => x.Price)
+                .HasPrecision(18, 2);
 
             builder.Entity<TrainerService>()
                 .HasKey(ts => new { ts.TrainerId, ts.GymServiceId });

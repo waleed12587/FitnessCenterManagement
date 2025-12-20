@@ -1,0 +1,34 @@
+﻿@model FitnessCenter.Web.ViewModels.AppointmentCreateVM
+
+<h1>Randevu Oluştur</h1>
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label asp-for="GymServiceId" class="form-label"></label>
+        <select asp-for="GymServiceId" class="form-select" asp-items="ViewBag.GymServiceId"></select>
+        <span asp-validation-for="GymServiceId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="TrainerId" class="form-label"></label>
+        <select asp-for="TrainerId" class="form-select" asp-items="ViewBag.TrainerId"></select>
+        <span asp-validation-for="TrainerId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="StartDateTime" class="form-label"></label>
+        <input asp-for="StartDateTime" type="datetime-local" class="form-control" />
+        <span asp-validation-for="StartDateTime" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Kaydet</button>
+    <a asp-action="MyAppointments" class="btn btn-secondary">Randevularım</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
