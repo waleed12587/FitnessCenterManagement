@@ -1,3 +1,8 @@
 .vs/
 **/bin/
 **/obj/
+
+# Git commit helper scripts (local tools)
+*.ps1
+commit-dates.txt
+GIT_COMMIT_INSTRUCTIONS.md
