@@ -72,3 +72,5 @@ The system generates body images with prompts like:
 - Generated images are saved in `wwwroot/uploads/ai-photos/`
 - Images are automatically cleaned up (you may want to add cleanup logic)
 
+
+

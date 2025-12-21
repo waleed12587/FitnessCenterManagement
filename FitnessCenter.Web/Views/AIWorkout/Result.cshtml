@@ -4,79 +4,496 @@
     ViewData["Title"] = "AI Recommendation Results";
 }
 
-<div class="container mt-4">
-    <div class="row">
-        <div class="col-md-10 offset-md-1">
-            <div class="card shadow">
-                <div class="card-header bg-success text-white">
-                    <h3 class="mb-0">
-                        <i class="bi bi-check-circle"></i> Personalized Plan Generated
-                    </h3>
-                </div>
-                <div class="card-body">
-                    <div class="row mb-4">
-                        <div class="col-md-6">
-                            <h5>Your Information</h5>
-                            <ul class="list-group">
-                                <li class="list-group-item"><strong>Age:</strong> @Model.Request.Age</li>
-                                <li class="list-group-item"><strong>Height:</strong> @Model.Request.Height cm</li>
-                                <li class="list-group-item"><strong>Weight:</strong> @Model.Request.Weight kg</li>
-                                <li class="list-group-item"><strong>Gender:</strong> @Model.Request.Gender</li>
-                                <li class="list-group-item"><strong>Goal:</strong> @Model.Request.Goal</li>
-                                <li class="list-group-item"><strong>Activity Level:</strong> @Model.Request.ActivityLevel</li>
-                            </ul>
+<div class="result-container">
+    <div class="container mt-4">
+        <!-- Success Header -->
+        <div class="success-header text-center mb-5 fade-in">
+            <div class="success-icon">
+                <i class="bi bi-check-circle-fill"></i>
+            </div>
+            <h1 class="display-4 fw-bold gradient-text">Your Transformation Plan is Ready!</h1>
+            <p class="lead text-muted">Personalized fitness and nutrition plan generated with AI</p>
+        </div>
+
+        <div class="row">
+            <!-- Transformation Comparison Section -->
+            @if (!string.IsNullOrEmpty(Model.TransformationImageUrl) && !string.IsNullOrEmpty(Model.OriginalPhotoUrl))
+            {
+                <div class="col-12 mb-5">
+                    <div class="transformation-card card shadow-lg border-0 fade-in">
+                        <div class="card-header bg-gradient-primary text-white py-4">
+                            <h3 class="mb-0 text-center">
+                                <i class="bi bi-arrow-left-right"></i> Your Transformation Preview
+                            </h3>
                         </div>
-                        <div class="col-md-6">
-                            <div class="alert alert-info">
-                                <strong>Generated At:</strong><br />
-                                @Model.GeneratedAt.ToString("dd MMMM yyyy HH:mm")
+                        <div class="card-body p-0">
+                            <!-- Before/After Comparison Slider -->
+                            <div class="comparison-container">
+                                <div class="comparison-wrapper">
+                                    <img src="@Model.OriginalPhotoUrl" alt="Before" class="comparison-img before-img" id="beforeImg" />
+                                    <img src="@Model.TransformationImageUrl" alt="After" class="comparison-img after-img" id="afterImg" />
+                                    <div class="comparison-slider">
+                                        <div class="slider-handle">
+                                            <i class="bi bi-arrows-move"></i>
+                                        </div>
+                                        <div class="slider-line"></div>
+                                    </div>
+                                    <div class="comparison-label before-label">
+                                        <span class="badge bg-primary">BEFORE</span>
+                                    </div>
+                                    <div class="comparison-label after-label">
+                                        <span class="badge bg-success">AFTER</span>
+                                    </div>
+                                </div>
+                                <div class="comparison-info text-center p-4 bg-light">
+                                    <p class="mb-2">
+                                        <i class="bi bi-magic text-success"></i> 
+                                        <strong>AI-Generated Transformation</strong>
+                                    </p>
+                                    <p class="text-muted small mb-0">
+                                        Drag the slider to compare your current look with your potential transformation after following the workout plan
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
+                </div>
+            }
 
-                    <div class="recommendation-box p-4 bg-light rounded">
-                        <h4 class="mb-3">Recommended Plan</h4>
+            <!-- User Information Card -->
+            <div class="col-lg-4 mb-4">
+                <div class="info-card card shadow border-0 h-100 fade-in">
+                    <div class="card-header bg-gradient-info text-white">
+                        <h5 class="mb-0"><i class="bi bi-person-badge"></i> Your Profile</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="info-item">
+                            <i class="bi bi-calendar text-primary"></i>
+                            <div>
+                                <strong>Age</strong>
+                                <span>@Model.Request.Age years</span>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <i class="bi bi-rulers text-success"></i>
+                            <div>
+                                <strong>Height</strong>
+                                <span>@Model.Request.Height cm</span>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <i class="bi bi-speedometer2 text-warning"></i>
+                            <div>
+                                <strong>Weight</strong>
+                                <span>@Model.Request.Weight kg</span>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <i class="bi bi-gender-ambiguous text-info"></i>
+                            <div>
+                                <strong>Gender</strong>
+                                <span>@Model.Request.Gender</span>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <i class="bi bi-bullseye text-danger"></i>
+                            <div>
+                                <strong>Goal</strong>
+                                <span class="badge bg-primary">@Model.Request.Goal</span>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <i class="bi bi-activity text-success"></i>
+                            <div>
+                                <strong>Activity Level</strong>
+                                <span>@Model.Request.ActivityLevel</span>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="text-center">
+                            <small class="text-muted">
+                                <i class="bi bi-clock"></i> Generated: @Model.GeneratedAt.ToString("MMM dd, yyyy HH:mm")
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recommendation Plan Card -->
+            <div class="col-lg-8 mb-4">
+                <div class="recommendation-card card shadow border-0 h-100 fade-in">
+                    <div class="card-header bg-gradient-success text-white">
+                        <h4 class="mb-0"><i class="bi bi-clipboard-check"></i> Your Personalized Plan</h4>
+                    </div>
+                    <div class="card-body">
                         <div class="recommendation-content">
                             @Html.Raw(Model.Recommendation.Replace("\n", "<br />"))
                         </div>
                     </div>
-
-                    <div class="mt-4 d-flex gap-2">
-                        <a asp-action="Index" class="btn btn-primary">
-                            <i class="bi bi-arrow-left"></i> Generate New Plan
-                        </a>
-                        <button onclick="window.print()" class="btn btn-secondary">
-                            <i class="bi bi-printer"></i> Print
-                        </button>
-                        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
-                            Home
-                        </a>
-                    </div>
                 </div>
             </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons text-center mt-5 mb-4 fade-in">
+            <a asp-action="Index" class="btn btn-primary btn-lg me-2">
+                <i class="bi bi-arrow-left"></i> Generate New Plan
+            </a>
+            <button onclick="window.print()" class="btn btn-secondary btn-lg me-2">
+                <i class="bi bi-printer"></i> Print Plan
+            </button>
+            <button onclick="downloadImage()" class="btn btn-success btn-lg me-2" @(string.IsNullOrEmpty(Model.TransformationImageUrl) ? "disabled" : "")>
+                <i class="bi bi-download"></i> Download Image
+            </button>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary btn-lg">
+                <i class="bi bi-house"></i> Home
+            </a>
         </div>
     </div>
 </div>
 
 <style>
+    /* Animations */
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .fade-in {
+        animation: fadeIn 0.6s ease-out;
+    }
+
+    /* Gradient Text */
+    .gradient-text {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    /* Success Header */
+    .success-header {
+        padding: 2rem 0;
+    }
+
+    .success-icon {
+        font-size: 5rem;
+        color: #28a745;
+        margin-bottom: 1rem;
+        animation: scaleIn 0.5s ease-out;
+    }
+
+    @@keyframes scaleIn {
+        from {
+            transform: scale(0);
+        }
+        to {
+            transform: scale(1);
+        }
+    }
+
+    /* Gradient Backgrounds */
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    }
+
+    .bg-gradient-info {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important;
+    }
+
+    .bg-gradient-success {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%) !important;
+    }
+
+    /* Transformation Card */
+    .transformation-card {
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    /* Comparison Slider */
+    .comparison-container {
+        position: relative;
+        width: 100%;
+        max-width: 100%;
+        margin: 0 auto;
+        background: #000;
+    }
+
+    .comparison-wrapper {
+        position: relative;
+        width: 100%;
+        height: 600px;
+        overflow: hidden;
+        cursor: col-resize;
+    }
+
+    .comparison-img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        user-select: none;
+        pointer-events: none;
+    }
+
+    .before-img {
+        z-index: 1;
+    }
+
+    .after-img {
+        z-index: 2;
+        clip-path: inset(0 50% 0 0);
+        transition: clip-path 0.1s;
+    }
+
+    .comparison-slider {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 4px;
+        height: 100%;
+        background: #fff;
+        z-index: 10;
+        transform: translateX(-50%);
+        cursor: col-resize;
+    }
+
+    .slider-handle {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 50px;
+        height: 50px;
+        background: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        cursor: grab;
+    }
+
+    .slider-handle:active {
+        cursor: grabbing;
+    }
+
+    .slider-handle i {
+        font-size: 1.5rem;
+        color: #667eea;
+    }
+
+    .slider-line {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 2px;
+        height: 100%;
+        background: #fff;
+        transform: translateX(-50%);
+        box-shadow: 0 0 10px rgba(255,255,255,0.5);
+    }
+
+    .comparison-label {
+        position: absolute;
+        top: 20px;
+        padding: 10px 20px;
+        background: rgba(0,0,0,0.6);
+        border-radius: 25px;
+        z-index: 11;
+        font-weight: bold;
+        font-size: 0.9rem;
+    }
+
+    .before-label {
+        left: 20px;
+    }
+
+    .after-label {
+        right: 20px;
+    }
+
+    /* Info Card */
+    .info-card {
+        border-radius: 15px;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .info-item:last-child {
+        border-bottom: none;
+    }
+
+    .info-item i {
+        font-size: 1.5rem;
+        margin-right: 1rem;
+        width: 30px;
+        text-align: center;
+    }
+
+    .info-item div {
+        flex: 1;
+    }
+
+    .info-item strong {
+        display: block;
+        color: #333;
+        margin-bottom: 0.25rem;
+    }
+
+    .info-item span {
+        color: #666;
+        font-size: 0.95rem;
+    }
+
+    /* Recommendation Card */
+    .recommendation-card {
+        border-radius: 15px;
+    }
+
     .recommendation-content {
         line-height: 1.8;
         font-size: 1.05rem;
+        color: #333;
     }
+
     .recommendation-content h3 {
-        color: #0d6efd;
+        color: #667eea;
         margin-top: 1.5rem;
         margin-bottom: 1rem;
+        font-weight: 600;
     }
+
     .recommendation-content h4 {
-        color: #198754;
+        color: #43e97b;
         margin-top: 1.2rem;
         margin-bottom: 0.8rem;
+        font-weight: 600;
     }
+
     .recommendation-content ul {
         margin-left: 1.5rem;
     }
+
     .recommendation-content li {
         margin-bottom: 0.5rem;
     }
+
+    /* Action Buttons */
+    .action-buttons .btn {
+        min-width: 180px;
+        border-radius: 50px;
+        padding: 12px 30px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .action-buttons .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .comparison-wrapper {
+            height: 400px;
+        }
+
+        .success-header h1 {
+            font-size: 2rem;
+        }
+
+        .action-buttons .btn {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+    }
 </style>
+
+@section Scripts {
+    <script>
+        // Comparison Slider Functionality
+        (function() {
+            const wrapper = document.querySelector('.comparison-wrapper');
+            const afterImg = document.getElementById('afterImg');
+            const slider = document.querySelector('.comparison-slider');
+            const handle = document.querySelector('.slider-handle');
+            
+            if (!wrapper || !afterImg || !slider || !handle) return;
+
+            let isDragging = false;
+
+            function updateSlider(x) {
+                const rect = wrapper.getBoundingClientRect();
+                const percentage = ((x - rect.left) / rect.width) * 100;
+                const clampedPercentage = Math.max(0, Math.min(100, percentage));
+                
+                afterImg.style.clipPath = `inset(0 ${100 - clampedPercentage}% 0 0)`;
+                slider.style.left = `${clampedPercentage}%`;
+            }
+
+            wrapper.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                updateSlider(e.clientX);
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    updateSlider(e.clientX);
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+
+            // Touch support
+            wrapper.addEventListener('touchstart', (e) => {
+                isDragging = true;
+                updateSlider(e.touches[0].clientX);
+            });
+
+            document.addEventListener('touchmove', (e) => {
+                if (isDragging) {
+                    e.preventDefault();
+                    updateSlider(e.touches[0].clientX);
+                }
+            });
+
+            document.addEventListener('touchend', () => {
+                isDragging = false;
+            });
+
+            // Initialize at 50%
+            updateSlider(wrapper.getBoundingClientRect().left + wrapper.offsetWidth / 2);
+        })();
+
+        // Download Image Function
+        function downloadImage() {
+            const imgUrl = '@Model.TransformationImageUrl';
+            if (!imgUrl) return;
+
+            const link = document.createElement('a');
+            link.href = imgUrl;
+            link.download = 'my-transformation.png';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+}

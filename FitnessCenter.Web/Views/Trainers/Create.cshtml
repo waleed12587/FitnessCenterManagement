@@ -1,4 +1,4 @@
-﻿@model FitnessCenter.Web.Models.Trainer
+﻿@model FitnessCenter.Web.ViewModels.TrainerCreateVM
 
 @{
     ViewData["Title"] = "Create";
@@ -9,37 +9,57 @@
 <h4>Trainer</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-8">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="FullName" class="control-label"></label>
                 <input asp-for="FullName" class="form-control" />
                 <span asp-validation-for="FullName" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="Specialty" class="control-label"></label>
                 <input asp-for="Specialty" class="form-control" />
                 <span asp-validation-for="Specialty" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="Bio" class="control-label"></label>
-                <input asp-for="Bio" class="form-control" />
+                <textarea asp-for="Bio" class="form-control" rows="3"></textarea>
                 <span asp-validation-for="Bio" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="GymId" class="control-label"></label>
-                <select asp-for="GymId" class ="form-control" asp-items="ViewBag.GymId"></select>
+                <select asp-for="GymId" class="form-control" asp-items="ViewBag.GymId">
+                    <option value="">-- Select Gym (Optional) --</option>
+                </select>
+                <span asp-validation-for="GymId" class="text-danger"></span>
             </div>
+            
+            <h5 class="mt-4 mb-3">Services (Select services this trainer can provide)</h5>
+            <div class="row mb-3">
+                @for (int i = 0; i < Model.Services.Count; i++)
+                {
+                    <div class="col-md-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   asp-for="Services[@i].IsSelected" />
+                            <label class="form-check-label">
+                                @Model.Services[i].Name
+                            </label>
+                            <input type="hidden" asp-for="Services[@i].GymServiceId" />
+                            <input type="hidden" asp-for="Services[@i].Name" />
+                        </div>
+                    </div>
+                }
+            </div>
+            
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

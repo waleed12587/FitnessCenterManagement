@@ -1,3 +1,4 @@
+﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -5,18 +6,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FitnessCenter.Web.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class AddPaymentStatusToAppointment : Migration
+    public partial class SyncPaymentProperties : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
-                name: "PaymentStatus",
-                table: "Appointments",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
-
             migrationBuilder.AddColumn<DateTime>(
                 name: "PaymentDate",
                 table: "Appointments",
@@ -28,15 +22,18 @@ namespace FitnessCenter.Web.Data.Migrations
                 table: "Appointments",
                 type: "nvarchar(max)",
                 nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "PaymentStatus",
+                table: "Appointments",
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "PaymentStatus",
-                table: "Appointments");
-
             migrationBuilder.DropColumn(
                 name: "PaymentDate",
                 table: "Appointments");
@@ -44,9 +41,10 @@ namespace FitnessCenter.Web.Data.Migrations
             migrationBuilder.DropColumn(
                 name: "PaymentMethod",
                 table: "Appointments");
+
+            migrationBuilder.DropColumn(
+                name: "PaymentStatus",
+                table: "Appointments");
         }
     }
 }
-
-
-

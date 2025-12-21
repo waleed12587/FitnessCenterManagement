@@ -1,4 +1,5 @@
 using FitnessCenter.Web.ViewModels;
+using FitnessCenter.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
@@ -12,15 +13,21 @@ namespace FitnessCenter.Web.Controllers
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IConfiguration _configuration;
         private readonly ILogger<AIWorkoutController> _logger;
+        private readonly AIImageService _imageService;
+        private readonly IWebHostEnvironment _environment;
 
         public AIWorkoutController(
             IHttpClientFactory httpClientFactory,
             IConfiguration configuration,
-            ILogger<AIWorkoutController> logger)
+            ILogger<AIWorkoutController> logger,
+            AIImageService imageService,
+            IWebHostEnvironment environment)
         {
             _httpClientFactory = httpClientFactory;
             _configuration = configuration;
             _logger = logger;
+            _imageService = imageService;
+            _environment = environment;
         }
 
         // GET: AIWorkout
@@ -47,11 +54,51 @@ namespace FitnessCenter.Web.Controllers
                 // Get AI recommendation
                 var recommendation = await GetAIRecommendationAsync(prompt);
 
+                string? transformationImageUrl = null;
+                string? originalPhotoUrl = null;
+
+                // Generate transformation image if photo was uploaded
+                if (model.Photo != null && model.Photo.Length > 0)
+                {
+                    try
+                    {
+                        transformationImageUrl = await _imageService.GenerateTransformationImageAsync(
+                            model.Photo,
+                            model.Goal,
+                            model.Gender,
+                            model.Age,
+                            model.Weight,
+                            model.Height);
+
+                        // Save original photo URL for display
+                        if (transformationImageUrl != null)
+                        {
+                            var uploadsPath = Path.Combine(_environment.WebRootPath, "uploads", "ai-photos");
+                            Directory.CreateDirectory(uploadsPath);
+                            var originalFileName = $"{Guid.NewGuid()}{Path.GetExtension(model.Photo.FileName)}";
+                            var originalPath = Path.Combine(uploadsPath, originalFileName);
+                            
+                            using (var stream = new FileStream(originalPath, FileMode.Create))
+                            {
+                                await model.Photo.CopyToAsync(stream);
+                            }
+                            
+                            originalPhotoUrl = $"/uploads/ai-photos/{originalFileName}";
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(ex, "Failed to generate transformation image, continuing without it");
+                    }
+                }
+
                 var result = new AIWorkoutResultVM
                 {
                     Request = model,
                     Recommendation = recommendation,
-                    GeneratedAt = DateTime.Now
+                    GeneratedAt = DateTime.Now,
+                    TransformationImageUrl = transformationImageUrl,
+                    OriginalPhotoUrl = originalPhotoUrl
                 };
 
                 return View("Result", result);

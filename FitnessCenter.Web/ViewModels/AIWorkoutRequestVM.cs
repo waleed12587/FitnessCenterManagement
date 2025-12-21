@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace FitnessCenter.Web.ViewModels
 {
@@ -34,6 +35,9 @@ namespace FitnessCenter.Web.ViewModels
         [Display(Name = "Health Conditions / Notes (Optional)")]
         [StringLength(500)]
         public string? HealthConditions { get; set; }
+
+        [Display(Name = "Upload Your Photo (Optional)")]
+        public IFormFile? Photo { get; set; }
     }
 
     public class AIWorkoutResultVM
@@ -41,6 +45,8 @@ namespace FitnessCenter.Web.ViewModels
         public AIWorkoutRequestVM Request { get; set; } = null!;
         public string Recommendation { get; set; } = string.Empty;
         public DateTime GeneratedAt { get; set; }
+        public string? TransformationImageUrl { get; set; }
+        public string? OriginalPhotoUrl { get; set; }
     }
 }
 

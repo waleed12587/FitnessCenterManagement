@@ -13,7 +13,20 @@ namespace FitnessCenter.Web.ViewModels
         public int TrainerId { get; set; }
 
         [Required]
-        [Display(Name = "Start Date & Time")]
-        public DateTime StartDateTime { get; set; }
+        [Display(Name = "Date")]
+        [DataType(DataType.Date)]
+        public DateTime AppointmentDate { get; set; }
+
+        [Required]
+        [Display(Name = "Time")]
+        [DataType(DataType.Time)]
+        public TimeSpan AppointmentTime { get; set; }
+
+        [Required]
+        [Display(Name = "Payment Method")]
+        public string PaymentMethod { get; set; } = "Cash";
+
+        // Helper property to combine date and time
+        public DateTime StartDateTime => AppointmentDate.Date.Add(AppointmentTime);
     }
 }

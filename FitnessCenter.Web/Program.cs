@@ -48,8 +48,16 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 
 builder.Services.AddControllersWithViews();
+
+// Add authorization policy for Admin area
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddHttpClient(); // Add HttpClientFactory for AI controller
+builder.Services.AddScoped<FitnessCenter.Web.Services.AIImageService>();
 
 var app = builder.Build();
 

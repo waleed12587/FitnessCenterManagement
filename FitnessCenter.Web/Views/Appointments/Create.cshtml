@@ -17,7 +17,7 @@
                     <form asp-action="Create" method="post">
                         <div class="mb-3">
                             <label asp-for="GymServiceId" class="form-label">Service</label>
-                            <select asp-for="GymServiceId" class="form-select" asp-items="ViewBag.GymServiceId">
+                            <select asp-for="GymServiceId" class="form-select" asp-items="ViewBag.GymServiceId" id="serviceSelect">
                                 <option value="">-- Select Service --</option>
                             </select>
                             <span asp-validation-for="GymServiceId" class="text-danger"></span>
@@ -25,16 +25,31 @@
 
                         <div class="mb-3">
                             <label asp-for="TrainerId" class="form-label">Trainer</label>
-                            <select asp-for="TrainerId" class="form-select" asp-items="ViewBag.TrainerId">
-                                <option value="">-- Select Trainer --</option>
+                            <select asp-for="TrainerId" class="form-select" id="trainerSelect">
+                                <option value="">-- Select Service First --</option>
                             </select>
                             <span asp-validation-for="TrainerId" class="text-danger"></span>
+                            <small class="form-text text-muted">Please select a service first to see available trainers.</small>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="AppointmentDate" class="form-label">Date</label>
+                                <input asp-for="AppointmentDate" type="date" class="form-control" min="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                                <span asp-validation-for="AppointmentDate" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="AppointmentTime" class="form-label">Time</label>
+                                <input asp-for="AppointmentTime" type="time" class="form-control" />
+                                <span asp-validation-for="AppointmentTime" class="text-danger"></span>
+                            </div>
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="StartDateTime" class="form-label">Start Date & Time</label>
-                            <input asp-for="StartDateTime" type="datetime-local" class="form-control" />
-                            <span asp-validation-for="StartDateTime" class="text-danger"></span>
+                            <label asp-for="PaymentMethod" class="form-label">Payment Method</label>
+                            <select asp-for="PaymentMethod" class="form-select" asp-items="ViewBag.PaymentMethods">
+                            </select>
+                            <span asp-validation-for="PaymentMethod" class="text-danger"></span>
                         </div>
 
                         <div class="d-grid gap-2">
@@ -54,4 +69,59 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const serviceSelect = document.getElementById('serviceSelect');
+            const trainerSelect = document.getElementById('trainerSelect');
+
+            serviceSelect.addEventListener('change', function() {
+                const serviceId = this.value;
+                
+                // Clear trainer dropdown
+                trainerSelect.innerHTML = '<option value="">-- Loading Trainers --</option>';
+                trainerSelect.disabled = true;
+
+                if (!serviceId) {
+                    trainerSelect.innerHTML = '<option value="">-- Select Service First --</option>';
+                    trainerSelect.disabled = false;
+                    return;
+                }
+
+                // Fetch trainers for the selected service
+                fetch(`/api/TrainersApi/available?serviceId=${serviceId}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        trainerSelect.innerHTML = '<option value="">-- Select Trainer --</option>';
+                        
+                        if (data && data.length > 0) {
+                            data.forEach(trainer => {
+                                const option = document.createElement('option');
+                                option.value = trainer.id;
+                                option.textContent = trainer.fullName + (trainer.specialty ? ` (${trainer.specialty})` : '');
+                                trainerSelect.appendChild(option);
+                            });
+                        } else {
+                            trainerSelect.innerHTML = '<option value="">-- No trainers available for this service --</option>';
+                        }
+                        
+                        trainerSelect.disabled = false;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching trainers:', error);
+                        trainerSelect.innerHTML = '<option value="">-- Error loading trainers --</option>';
+                        trainerSelect.disabled = false;
+                    });
+            });
+
+            // If a service is already selected (e.g., on validation error), load trainers
+            if (serviceSelect.value) {
+                serviceSelect.dispatchEvent(new Event('change'));
+            }
+        });
+    </script>
 }

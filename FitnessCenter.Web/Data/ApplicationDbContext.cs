@@ -27,12 +27,6 @@ namespace FitnessCenter.Web.Data
                 .Property(x => x.Price)
                 .HasPrecision(18, 2);
 
-            // Ignore payment properties until migration is applied
-            builder.Entity<Appointment>()
-                .Ignore(a => a.PaymentStatus)
-                .Ignore(a => a.PaymentDate)
-                .Ignore(a => a.PaymentMethod);
-
             builder.Entity<TrainerService>()
                 .HasKey(ts => new { ts.TrainerId, ts.GymServiceId });
 

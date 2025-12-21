@@ -52,24 +52,78 @@ namespace FitnessCenter.Web.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create()
         {
+            var allServices = await _context.GymServices
+                .AsNoTracking()
+                .OrderBy(s => s.Name)
+                .ToListAsync();
+
+            var vm = new TrainerCreateVM
+            {
+                Services = allServices.Select(s => new ServiceCheckboxVM
+                {
+                    GymServiceId = s.Id,
+                    Name = s.Name,
+                    IsSelected = false
+                }).ToList()
+            };
+
             ViewData["GymId"] = new SelectList(await _context.Gyms.OrderBy(g => g.Name).ToListAsync(), "Id", "Name");
-            return View();
+            return View(vm);
         }
 
         // POST: Trainers/Create
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FullName,Specialty,Bio,GymId")] Trainer trainer)
+        public async Task<IActionResult> Create(TrainerCreateVM vm)
         {
             if (ModelState.IsValid)
             {
+                var trainer = new Trainer
+                {
+                    FullName = vm.FullName,
+                    Specialty = vm.Specialty,
+                    Bio = vm.Bio,
+                    GymId = vm.GymId
+                };
+
                 _context.Add(trainer);
+                await _context.SaveChangesAsync(); // Save first to get the trainer ID
+
+                // Add selected services
+                var selectedIds = vm.Services
+                    .Where(s => s.IsSelected)
+                    .Select(s => s.GymServiceId)
+                    .ToList();
+
+                foreach (var serviceId in selectedIds)
+                {
+                    _context.TrainerServices.Add(new TrainerService
+                    {
+                        TrainerId = trainer.Id,
+                        GymServiceId = serviceId
+                    });
+                }
+
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GymId"] = new SelectList(await _context.Gyms.OrderBy(g => g.Name).ToListAsync(), "Id", "Name", trainer.GymId);
-            return View(trainer);
+            
+            // Reload services if validation fails
+            var allServices = await _context.GymServices
+                .AsNoTracking()
+                .OrderBy(s => s.Name)
+                .ToListAsync();
+
+            vm.Services = allServices.Select(s => new ServiceCheckboxVM
+            {
+                GymServiceId = s.Id,
+                Name = s.Name,
+                IsSelected = vm.Services.FirstOrDefault(vs => vs.GymServiceId == s.Id)?.IsSelected ?? false
+            }).ToList();
+
+            ViewData["GymId"] = new SelectList(await _context.Gyms.OrderBy(g => g.Name).ToListAsync(), "Id", "Name", vm.GymId);
+            return View(vm);
         }
 
         // GET: Trainers/Edit/5

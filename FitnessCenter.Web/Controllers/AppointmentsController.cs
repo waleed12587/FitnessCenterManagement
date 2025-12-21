@@ -31,10 +31,27 @@ namespace FitnessCenter.Web.Controllers
             // services dropdown
             ViewData["GymServiceId"] = new SelectList(await _context.GymServices.OrderBy(s => s.Name).ToListAsync(), "Id", "Name");
 
-            // trainers dropdown empty at first (we’ll fill by selected service later or show all)
-            ViewData["TrainerId"] = new SelectList(await _context.Trainers.OrderBy(t => t.FullName).ToListAsync(), "Id", "FullName");
+            // trainers dropdown empty at first (we'll fill by selected service later via JavaScript)
+            ViewData["TrainerId"] = new SelectList(new List<Trainer>(), "Id", "FullName");
 
-            return View(new AppointmentCreateVM { StartDateTime = DateTime.Now.AddHours(1) });
+            // Payment methods
+            ViewData["PaymentMethods"] = new SelectList(new[]
+            {
+                new { Value = "Cash", Text = "Cash" },
+                new { Value = "Credit Card", Text = "Credit Card" },
+                new { Value = "Debit Card", Text = "Debit Card" },
+                new { Value = "Online Payment", Text = "Online Payment" }
+            }, "Value", "Text", "Cash");
+
+            var tomorrow = DateTime.Now.AddDays(1).Date;
+            var defaultTime = new TimeSpan(10, 0, 0); // 10:00 AM
+
+            return View(new AppointmentCreateVM 
+            { 
+                AppointmentDate = tomorrow,
+                AppointmentTime = defaultTime,
+                PaymentMethod = "Cash"
+            });
         }
 
         // POST: Appointments/Create
@@ -45,7 +62,25 @@ namespace FitnessCenter.Web.Controllers
             if (!ModelState.IsValid)
             {
                 ViewData["GymServiceId"] = new SelectList(_context.GymServices.OrderBy(s => s.Name), "Id", "Name", vm.GymServiceId);
-                ViewData["TrainerId"] = new SelectList(_context.Trainers.OrderBy(t => t.FullName), "Id", "FullName", vm.TrainerId);
+                
+                // Load trainers for the selected service
+                var trainersForService = await _context.TrainerServices
+                    .Where(ts => ts.GymServiceId == vm.GymServiceId)
+                    .Include(ts => ts.Trainer)
+                    .Select(ts => ts.Trainer)
+                    .OrderBy(t => t.FullName)
+                    .ToListAsync();
+                
+                ViewData["TrainerId"] = new SelectList(trainersForService, "Id", "FullName", vm.TrainerId);
+                
+                ViewData["PaymentMethods"] = new SelectList(new[]
+                {
+                    new { Value = "Cash", Text = "Cash" },
+                    new { Value = "Credit Card", Text = "Credit Card" },
+                    new { Value = "Debit Card", Text = "Debit Card" },
+                    new { Value = "Online Payment", Text = "Online Payment" }
+                }, "Value", "Text", vm.PaymentMethod);
+                
                 return View(vm);
             }
 
@@ -64,7 +99,24 @@ namespace FitnessCenter.Web.Controllers
             {
                 ModelState.AddModelError("", "The selected trainer does not offer this service.");
                 ViewData["GymServiceId"] = new SelectList(_context.GymServices.OrderBy(s => s.Name), "Id", "Name", vm.GymServiceId);
-                ViewData["TrainerId"] = new SelectList(_context.Trainers.OrderBy(t => t.FullName), "Id", "FullName", vm.TrainerId);
+                
+                var trainersForService = await _context.TrainerServices
+                    .Where(ts => ts.GymServiceId == vm.GymServiceId)
+                    .Include(ts => ts.Trainer)
+                    .Select(ts => ts.Trainer)
+                    .OrderBy(t => t.FullName)
+                    .ToListAsync();
+                
+                ViewData["TrainerId"] = new SelectList(trainersForService, "Id", "FullName", vm.TrainerId);
+                
+                ViewData["PaymentMethods"] = new SelectList(new[]
+                {
+                    new { Value = "Cash", Text = "Cash" },
+                    new { Value = "Credit Card", Text = "Credit Card" },
+                    new { Value = "Debit Card", Text = "Debit Card" },
+                    new { Value = "Online Payment", Text = "Online Payment" }
+                }, "Value", "Text", vm.PaymentMethod);
+                
                 return View(vm);
             }
 
@@ -83,7 +135,24 @@ namespace FitnessCenter.Web.Controllers
             {
                 ModelState.AddModelError("", "The trainer has another appointment at this time.");
                 ViewData["GymServiceId"] = new SelectList(_context.GymServices.OrderBy(s => s.Name), "Id", "Name", vm.GymServiceId);
-                ViewData["TrainerId"] = new SelectList(_context.Trainers.OrderBy(t => t.FullName), "Id", "FullName", vm.TrainerId);
+                
+                var trainersForService = await _context.TrainerServices
+                    .Where(ts => ts.GymServiceId == vm.GymServiceId)
+                    .Include(ts => ts.Trainer)
+                    .Select(ts => ts.Trainer)
+                    .OrderBy(t => t.FullName)
+                    .ToListAsync();
+                
+                ViewData["TrainerId"] = new SelectList(trainersForService, "Id", "FullName", vm.TrainerId);
+                
+                ViewData["PaymentMethods"] = new SelectList(new[]
+                {
+                    new { Value = "Cash", Text = "Cash" },
+                    new { Value = "Credit Card", Text = "Credit Card" },
+                    new { Value = "Debit Card", Text = "Debit Card" },
+                    new { Value = "Online Payment", Text = "Online Payment" }
+                }, "Value", "Text", vm.PaymentMethod);
+                
                 return View(vm);
             }
 
@@ -95,7 +164,9 @@ namespace FitnessCenter.Web.Controllers
                 StartDateTime = start,
                 EndDateTime = end,
                 Price = service.Price,
-                Status = AppointmentStatus.Pending
+                Status = AppointmentStatus.Pending,
+                PaymentMethod = vm.PaymentMethod,
+                PaymentStatus = PaymentStatus.Pending
             };
 
             _context.Appointments.Add(appointment);
